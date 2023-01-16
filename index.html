@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>
+
+/*
+This uses MIT license just like any other project, you should be able to copy me and have no issues as I won't sue you,
+- NullByte3
+*/
+
+    function displayDate() {
+      var date = new Date();
+      var days = ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"];
+      var currentDay = days[date.getDay()];
+      var month = ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kesäkuu", "Heinäkuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"];
+      var currentMonth = month[date.getMonth()];
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      minutes = checkTime(minutes);
+      var timeOfDay = (hours < 17) ? "Aamulla" : "Iltapäivällä";
+      var currentTime = hours + ":" + minutes;
+      var weather;
+      switch (currentMonth) {
+        case "Tammikuu":
+        case "Helmikuu":
+        case "Maaliskuu":
+          weather = "Kylmä";
+          break;
+        case "Huhtikuu":
+        case "Toukokuu":
+        case "Kesäkuu":
+          weather = "Kesäinen";
+          break;
+        case "Heinäkuu":
+        case "Elokuu":
+        case "Syyskuu":
+          weather = "Lämmin";
+          break;
+        case "Lokakuu":
+        case "Marraskuu":
+        case "Joulukuu":
+          weather = "Kylmä";
+          break;
+        default:
+          weather = "Tuntematon";
+      }
+      document.getElementById("day").innerHTML = currentDay;
+      document.getElementById("month").innerHTML = currentMonth;
+      document.getElementById("time").innerHTML = currentTime;
+      document.getElementById("day-night").innerHTML = timeOfDay;
+      document.getElementById("weather").innerHTML = weather;
+      setTimeout(displayDate, 1000); // this is just a loop i used this so if there is an error i could just debug it instead of setInerval
+    }
+    function checkTime(i) {
+      if (i < 10) { i = "0" + i };
+      return i;
+    }
+    function getTemperature() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        document.getElementById("temperature").innerHTML = "Geolocation is not suppoted, I got zero idea how to write this shit in finnish go translate yourself"; // stupid? click allow or Salli vittu
+      }
+    }
+
+    function showPosition(position) {
+      var lat = position.coords.latitude;
+      var lon = position.coords.longitude;
+      var url = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&units=metric&APPID=6a78596d062df78380eff5944c4e5567"; // best api cuz it allos client side requesting and doesnt require a api key :)
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          var temperature = data.main.temp;
+          document.getElementById("temperature").innerHTML = temperature + "&#8451;"; // this is hex or whatever its called unicode? figure out yourself
+        });
+    }
+    for (var i2 = 0; i2 != 100; i2++) { // It's not I because it'd collide with the other I, read the code, edit: I moved this piece of code here because I realized it never runs
+      console.log(`I'm counting to 100, I'm at ${i2}`);
+    }
+    var i  = 0;
+    var sleepTime = 30 * 1000;
+    while (false) { // Do nothing, this shit freezes the whole code, I know how to use while, but I will never use it and will use setInterval
+    }
+    setInterval(sleepTime, getTemperature());
+  </script>
+
+</head>
+
+<body onload="displayDate()">
+  <center>
+    <p>Tänään on <span id="day"></span>.</p>
+    <p>Tänään on <span id="month"></span>.</p>
+    <p>Kello on <span id="time"></span>.</p>
+    <p>Ollaan <span id="day-night"></span>.</p>
+    <p onload="getTemperature()">Sää on <span id="weather"></span> ja lämpötila on <span id="temperature"></span></p>
+  </center>
+</body>
+
+</html>
